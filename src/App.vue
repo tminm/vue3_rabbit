@@ -7,14 +7,11 @@ import HelloWorld from './components/HelloWorld.vue'
   
   <div class="test">
     <RouterView/>
-    test css
   </div>
 </template>
 
 <style scoped lang="scss">
-.test{
-  color: $priceColor;
-}
+
 header {
   line-height: 1.5;
   max-height: 100vh;

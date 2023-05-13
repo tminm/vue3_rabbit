@@ -1,5 +1,7 @@
 <template>
-  <h5>Home页</h5>
+  <div class="home">
+    home页
+  </div>
 </template>
 
 <script>
@@ -8,6 +10,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped lang="scss">
+.home{
+  height: 1200px;
+}
 </style>

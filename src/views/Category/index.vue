@@ -2,17 +2,21 @@
 import { getCategoryAPI } from "@/apis/category.js";
 import { getBannerAPI } from "@/apis/home.js";
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, onBeforeRouteUpdate } from "vue-router";
 import Goodsitems from "../Home/components/Goodsitems.vue";
 const categoryData = ref([]);
 const route = useRoute();
-const getCategory = async () => {
-  const res = await getCategoryAPI(route.params.id);
+const getCategory = async (id = route.params.id) => {
+  const res = await getCategoryAPI(id);
   categoryData.value = res.result;
 };
 
 onMounted(() => getCategory());
-
+onBeforeRouteUpdate((to) =>{
+  console.log('路由变化了');
+  //存在问题
+  getCategory(to.params.id)
+})
 //获取Banner
 const bannerList = ref([]);
 const getBanner = async () => {
@@ -24,6 +28,8 @@ const getBanner = async () => {
 };
 
 onMounted(() => getBanner());
+
+
 </script>
 
 <template>

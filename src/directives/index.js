@@ -1,5 +1,5 @@
 import { useIntersectionObserver } from '@vueuse/core'
-
+import { getBannerAPI } from "@/apis/home.js";
 export const lazyPlugin = {
     install(app) {
         app.directive('img-lazy', {

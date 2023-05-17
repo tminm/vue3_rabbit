@@ -12,7 +12,7 @@ const getCategoryData = async () =>{
   categoryData.value = res.result
 }
 onMounted(() => getCategoryData())
-
+const disabled = ref(false)
 //获取渲染列表数据
 const goodList = ref([])
 const reqData = ref({
@@ -26,6 +26,23 @@ const getGoodList = async () =>{
   goodList.value = res.result.items
 }
 onMounted(() => getGoodList())
+
+const tabChange = () =>{
+  reqData.value.page =1
+  getGoodList()
+}
+//加载更多
+const load = async () =>{
+  console.log('加载更多');
+  //获取下一页数据
+  reqData.value.page++
+  const res = await getSubCategoryAPI(reqData.value)
+  goodList.value = [...goodList.value,...res.result.items]
+  //加载完毕，停止监听
+  if(res.result.items.length ===0){
+    disabled.value = true
+  }
+}
 </script>
 
 <template>
@@ -40,12 +57,12 @@ onMounted(() => getGoodList())
       </el-breadcrumb>
     </div>
     <div class="sub-container">
-      <el-tabs>
+      <el-tabs v-model="reqData.sortField" @tab-change="tabChange">
         <el-tab-pane label="最新商品" name="publishTime"></el-tab-pane>
         <el-tab-pane label="最高人气" name="orderNum"></el-tab-pane>
         <el-tab-pane label="评论最多" name="evaluateNum"></el-tab-pane>
       </el-tabs>
-      <div class="body">
+      <div class="body" v-infinite-scroll="load">
          <!-- 商品列表-->
          <Goodsitems v-for="Goods in goodList" :goods="Goods" :key="Goods.id"></Goodsitems>
       </div>

@@ -1,9 +1,38 @@
 <script setup>
 import Goodsitems from "../Home/components/Goodsitems.vue";
 import {useBanner} from './composables/useBanner.js'
+// import { useCategory } from "./composables/useCategory.js";
+import { getCategoryAPI } from "@/apis/category.js";
+import { getBannerAPI } from '@/apis/home';
+import { ref, onMounted } from "vue";
+import { useRoute, onBeforeRouteUpdate } from "vue-router";
 import {useCategory} from './composables/useCategory.js'
 const { bannerList } = useBanner()
 const {categoryData} = useCategory()
+// const categoryData = ref([]);
+//     const route = useRoute();
+//     const getCategory = async (id = route.params.id) => {
+//         const res = await getCategoryAPI(id);
+//         categoryData.value = res.result;
+//     };
+
+//     onMounted(() => getCategory());
+//     onBeforeRouteUpdate((to) => {
+//         console.log('路由变化了');
+//         //存在问题
+//         getCategory(to.params.id)
+//     })
+
+//     const bannerList = ref([]);
+//     const getBanner = async () => {
+//         const res = await getBannerAPI({
+//             distributionSite: "2"
+//         });
+//         // console.log(res);
+//         bannerList.value = res.result;
+//     };
+    
+//     onMounted(() => getBanner());
 </script>
 
 <template>
@@ -28,7 +57,7 @@ const {categoryData} = useCategory()
         <h3>全部分类</h3>
         <ul>
           <li v-for="i in categoryData.children" :key="i.id">
-            <RouterLink to="/">
+            <RouterLink :to="`/category/sub/${i.id}`">
               <img :src="i.picture" />
               <p>{{ i.name }}</p>
             </RouterLink>

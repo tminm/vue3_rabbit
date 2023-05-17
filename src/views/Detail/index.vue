@@ -1,5 +1,6 @@
 <script setup>
 import { getDetail } from '@/apis/detail';
+import DetailHot from './components/DetailHot.vue'
 import {useRoute} from 'vue-router'
 import {ref,onMounted} from 'vue'
 const goods = ref({})
@@ -118,7 +119,10 @@ onMounted(() => getGoods())
             </div>
             <!-- 24热榜+专题推荐 -->
             <div class="goods-aside">
-
+              <!-- 24小时热榜 -->
+              <DetailHot></DetailHot>
+              <!-- 周热榜 -->
+              <DetailHot></DetailHot>
             </div>
           </div>
         </div>

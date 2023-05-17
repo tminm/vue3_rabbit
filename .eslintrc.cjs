@@ -6,7 +6,7 @@ module.exports = {
     'eslint:recommended'
   ],
   parserOptions: {
-    ecmaVersion: 'latest'
+    ecmaVersion: 2020
   },
   rules:{
     'vue/multi-word-component-names':0 //不再强制要求组件命名

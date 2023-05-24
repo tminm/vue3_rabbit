@@ -15,10 +15,10 @@ const httpInstance =  axios.create({
   // axios响应式拦截器
   httpInstance.interceptors.response.use(res => res.data, e => {
     // 统一错误提示
-    ElMessage({
-      type:'warning',
-      message:e.response.data.message
-    })
+    // ElMessage({
+    //   type:'warning',
+    //   message:e.response.data.message
+    // })
     return Promise.reject(e)
   })
   

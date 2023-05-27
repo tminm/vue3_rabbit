@@ -5,7 +5,7 @@ export const useCartStore = defineStore('cart',() =>{
     //1、定义status
     const cartList = ref([])
     //2、action
-    const addcart = () =>{
+    const addcart = (goods) =>{
         //添加购物车操作
         const item = cartList.value.find((item) => goods.skuId === item.skuId)
         if(item){

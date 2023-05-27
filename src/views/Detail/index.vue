@@ -1,51 +1,63 @@
 <script setup>
-import { getDetail } from '@/apis/detail';
 import DetailHot from './components/DetailHot.vue'
-import {useRoute} from 'vue-router'
-import {ref,onMounted} from 'vue'
-import { useCartStore } from '@/stores/cartStore';
-import { tr } from 'element-plus/es/locale';
-const goods = ref({})
-const route = useRoute()
+import { getDetail } from '@/apis/detail'
+import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import { useCartStore } from '@/stores/cartStore'
 const cartStore = useCartStore()
-const getGoods = async () =>{
-    const res = await getDetail(route.params.id)
-    goods.value = res.result
-}
-onMounted(() => getGoods())
-
-//sku规格被操作时
-let skuobj = {}
-const skuChange = (sku) =>{
-  console.log(sku);
-  skuobj = sku
+const goods = ref({})
+let isGoodsLoaded = ref(false) // 新增一个响应式变量用于标记商品是否已加载
+let id = ref(0)
+const route = useRoute()
+const getGoods = async () => {
+  const res = await getDetail(route.params.id)
+  goods.value = res.result
+  isGoodsLoaded.value = true // 设置为已加载
+  console.log(goods.value) // 现在日志会显示获取到的商品详情
 }
 
-//count
+onMounted(async () => {
+  await getGoods()
+  console.log(goods.value) // 现在日志会显示获取到的商品详情
+})
+// sku规格被操作时
+let skuObj = {}
+const skuChange = (sku) => {
+  skuObj = sku
+}
+
+// count
 const count = ref(1)
-const countChange = (count) =>{
-  console.log(count);
+const countChange = (count) => {
+  console.log(count)
 }
 
-//添加购物车
-const addCart = () =>{
-  if(skuobj.skuId){
-    //规则已经选择
+// 添加购物车
+const addCart = () => {
+  if(isGoodsLoaded){
+    if (skuObj.skuId) {
+    console.log(goods.value);
+    // 规则已经选择  触发action
     cartStore.addcart({
-      id:goods.value.id,
-      name:goods.value.name,
-      picture:goods.value.mainPictures[0],
-      price:goods.value.price,
-      count:count.value,
-      skuId:skuobj.skuId,
-      attrsText:skuobj.specsText,
-      selected:true
+      id: goods.value.id,
+      name: goods.value.name,
+      picture: goods.value.mainPictures[0],
+      price: goods.value.price,
+      count: count.value,
+      skuId: skuObj.skuId,
+      attrsText: skuObj.specsText,
+      selected: true
     })
-  }else{
-    //规格没有选择
+  } else {
+    // 规格没有选择 提示用户
     ElMessage.warning('请选择规格')
   }
+  }else{
+    ElMessage('请稍后再试')
+  }
 }
+
 </script>
 
 <template>
@@ -55,13 +67,15 @@ const addCart = () =>{
         <el-breadcrumb separator=">">
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
           <!-- 
-            错误原因：goods一开始{} {}.categories -> undefined -> undefined[1]
-            1、可选链得语法?.
-            2、v-if手动控制渲染时机，保证只有数据存在才渲染
-           -->
+                错误原因：goods一开始{}  {}.categories -> undefined  -> undefined[1]
+                1. 可选链的语法?. 
+                2. v-if手动控制渲染时机 保证只有数据存在才渲染
+            -->
           <el-breadcrumb-item :to="{ path: `/category/${goods.categories[1].id}` }">{{ goods.categories[1].name }}
           </el-breadcrumb-item>
-          <el-breadcrumb-item :to="{ path: `/category/sub/${goods.categories[0].id}` }">{{ goods.categories[0].name }}
+          <el-breadcrumb-item :to="{ path: `/category/sub/${goods.categories[0].id}` }">{{
+            goods.categories[0].name
+          }}
           </el-breadcrumb-item>
           <el-breadcrumb-item>抓绒保暖，毛毛虫子儿童运动鞋</el-breadcrumb-item>
         </el-breadcrumb>
@@ -82,12 +96,12 @@ const addCart = () =>{
                 </li>
                 <li>
                   <p>商品评价</p>
-                  <p>{{ goods.commentCount }}</p>
+                  <p>{{ goods.commentCount }}+</p>
                   <p><i class="iconfont icon-comment-filling"></i>查看评价</p>
                 </li>
                 <li>
                   <p>收藏人气</p>
-                  <p>{{ goods.collectCount }}</p>
+                  <p>{{ goods.collectCount }}+</p>
                   <p><i class="iconfont icon-favorite-filling"></i>收藏商品</p>
                 </li>
                 <li>
@@ -121,12 +135,12 @@ const addCart = () =>{
                 </dl>
               </div>
               <!-- sku组件 -->
-              <XtxSku :goods="goods" @change="skuChange"/>
+              <XtxSku :goods="goods" @change="skuChange" />
               <!-- 数据组件 -->
-              <el-input-number v-model="count" @change="countChange"></el-input-number>
+              <el-input-number v-model="count" @change="countChange" />
               <!-- 按钮组件 -->
               <div>
-                <el-button size="large" class="btn">
+                <el-button size="large" class="btn" @click="addCart(goods)">
                   加入购物车
                 </el-button>
               </div>
@@ -155,10 +169,10 @@ const addCart = () =>{
             </div>
             <!-- 24热榜+专题推荐 -->
             <div class="goods-aside">
-              <!-- 24小时热榜 -->
-              <DetailHot :hot-type="1"></DetailHot>
-              <!-- 周热榜 -->
-              <DetailHot :hot-type="2"></DetailHot>
+              <!-- 24小时 -->
+              <DetailHot :hot-type="1" />
+              <!-- 周 -->
+              <DetailHot :hot-type="2" />
             </div>
           </div>
         </div>

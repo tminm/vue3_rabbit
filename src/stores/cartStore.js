@@ -26,7 +26,7 @@ export const useCartStore = defineStore('cart',() =>{
         cartList.value.splice(idx,1)
     }
     //单选功能
-    const singleCheck = () =>{
+    const singleCheck = (selected) =>{
         //通过skuId找到要修改的那一项 然后把它的selected修改为传过来的selected
         const item = cartList.value.find((item) => item.skuId === skuId)
         item.selected = selected
@@ -43,11 +43,17 @@ export const useCartStore = defineStore('cart',() =>{
     const allCount = computed(() => cartList.value.reduce((a,c) => a+c.count,0))
     //2、总价 所有项的count*price之和
     const allPrice = computed(() => cartList.value.reduce((a,c) => a + c.count * c.price,0))
+    //3、已选择数量
+    const selectedCount = computed(() => cartList.value.filter(item => item.selected).reduce((a,c) => a+c.count,0))
+    //4、已选择商品价钱合计
+    const selectedPrice = computed(() => cartList.value.filter(item => item.selected).reduce((a,c) => a+c.count*c.price,0))
     return{
         allCount,
         allPrice,
         cartList,
         isAll,
+        selectedCount,
+        selectedPrice,
         addcart,
         delCart,
         singleCheck,

@@ -1,5 +1,6 @@
 //封装购物车相关接口
 import httpInstance from '@/utils/http'
+
 //加入购物车
 export const insertCartAPI = ({skuId,count}) =>{
     return httpInstance({
@@ -11,6 +12,7 @@ export const insertCartAPI = ({skuId,count}) =>{
         }
     })
 }
+
 //获取最新购物车列表
 export const findNewCartListAPI = () =>{
     return httpInstance({
@@ -18,3 +20,13 @@ export const findNewCartListAPI = () =>{
     })
 }
 
+//删除购物车
+export const delCartAPI = (ids) =>{
+    return httpInstance({
+        url:'/member/cart',
+        method:'DELETE',
+        data:{
+            ids
+        }
+    })
+}

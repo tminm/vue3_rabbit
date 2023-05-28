@@ -2,20 +2,24 @@ import { selectGroupKey } from "element-plus";
 import { defineStore } from "pinia";
 import { computed, ref } from 'vue';
 import { useUserStore } from "./user";
-import {insertCartAPI,findNewCartListAPI} from '@/apis/cart'
+import { insertCartAPI, findNewCartListAPI, delCartAPI } from '@/apis/cart'
 export const useCartStore = defineStore('cart', () => {
+    //获取最新购物车列表action
+    const updateNewList = async () => {
+        const res = await findNewCartListAPI()
+        cartList.value = res.result
+    }
     const userStore = useUserStore()
     const isLogin = computed(() => userStore.userInfo.token)
     //1、定义status
     const cartList = ref([])
     //2、action
-    const addcart =  async (goods) => {
-        const {skuId,count} = goods
+    const addcart = async (goods) => {
+        const { skuId, count } = goods
         if (isLogin) {
             //登录之后的加入购物车逻辑
-           await insertCartAPI({skuId,count})
-           const res = await findNewCartListAPI()
-           cartList.value = res.result
+            await insertCartAPI({ skuId, count })
+            updateNewList()
         } else {
             //添加购物车操作
             const item = cartList.value.find((item) => goods.skuId === item.skuId)
@@ -29,13 +33,21 @@ export const useCartStore = defineStore('cart', () => {
     }
 
     //删除购物车
-    const delCart = (skuId) => {
-        //思路：
-        //1、找到要删除的下标值
-        //2、使用数组的过滤方法
-        const idx = cartList.value.findIndex((item) => skuId === item.id)
-        cartList.value.splice(idx, 1)
+    const delCart = async (skuId) => {
+        if (isLogin.value) {
+            //调用接口实现接口购物车中的删除功能
+            await delCartAPI([skuId])
+            updateNewList()
+        }
+        else {
+            //思路：
+            //1、找到要删除的下标值
+            //2、使用数组的过滤方法
+            const idx = cartList.value.findIndex((item) => skuId === item.id)
+            cartList.value.splice(idx, 1)
+        }
     }
+
     //单选功能
     const singleCheck = (selected) => {
         //通过skuId找到要修改的那一项 然后把它的selected修改为传过来的selected

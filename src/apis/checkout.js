@@ -8,7 +8,7 @@ export const getCheckInfoAPI = () =>{
 
 //创建订单
 
-export const createOrderAPI = () =>{
+export const createOrderAPI = (data) =>{
     return httpInstance({
         url:'/member/order',
         method:'POST',

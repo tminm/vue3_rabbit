@@ -31,7 +31,7 @@ const confirm = () =>{
 
 //创建订单
 const createOrder = async () =>{
-  await createOrderAPI({
+  const res =  await createOrderAPI({
     deliveryTimeType:1,
     payType:1,
     payChannel:1,

@@ -1,4 +1,6 @@
-<script setup> </script>
+<script setup>
+
+</script>
 
 <template>
   <div class="container">
@@ -6,7 +8,7 @@
       <div class="user-manage">
         <h4>我的账户</h4>
         <div class="links">
-          <RouterLink to="/member/user">个人中心</RouterLink>
+          <RouterLink to="/member">个人中心</RouterLink>
         </div>
         <h4>交易管理</h4>
         <div class="links">
